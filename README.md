@@ -7,7 +7,7 @@
 安装
 
 ```shell
-composer require yzh52521/webman-task
+ 
 ```
 
 ## 简单使用
