@@ -72,13 +72,17 @@ class Server
     {
         $config                = config('plugin.yzh52521.task.app.task');
         $this->debug           = $config['debug'] ?? true;
-        $this->writeLog        = $config['write_log'] ?? true;
+        $this->writeLog        = $config['write_log'] ?? false;
         $this->crontabTable    = $config['crontab_table'];
         $this->crontabLogTable = $config['crontab_table_log'];
         $this->worker          = $worker;
-
-        $this->checkCrontabTables();
-        $this->crontabInit();
+		
+		try { 
+			$this->checkCrontabTables();
+			$this->crontabInit();
+		} catch (\Throwable $e) {
+			echo "\033[0;31m异常：初始化任务失败,请检查数据库配置\033[0m\n"; 
+		}
     }
 
     /**
@@ -554,7 +558,7 @@ class Server
     private function createCrontabTable()
     {
         $sql = <<<SQL
- CREATE TABLE IF NOT EXISTS `system_crontab`  (
+ CREATE TABLE IF NOT EXISTS `sys_crontab`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务标题',
   `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '任务类型 (1 command, 2 class, 3 url, 4 eval)',
@@ -586,7 +590,7 @@ SQL;
     private function createCrontabLogTable()
     {
         $sql = <<<SQL
-CREATE TABLE IF NOT EXISTS `system_crontab_log`  (
+CREATE TABLE IF NOT EXISTS `sys_crontab_log`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `crontab_id` bigint UNSIGNED NOT NULL COMMENT '任务id',
   `target` varchar(255) NOT NULL COMMENT '任务调用目标字符串',
