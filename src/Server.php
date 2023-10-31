@@ -425,7 +425,7 @@ class Server
             ->insertGetId($param);
         $id && $this->crontabRun($id);
 
-        return json_encode(['code' => 200, 'msg' => 'ok', 'data' => ['code' => (bool)$id]]);
+        return json_encode(['code' => 200, 'msg' => 'ok', 'data' => ['code' => (bool)$id],'id'=>$id]);
     }
 
     /**
